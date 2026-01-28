@@ -15,18 +15,25 @@ export default function Apply() {
 
         const checkSessionAndRedirect = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession()
+                const { data, error } = await supabase.auth.getSession()
+
+                if (error) {
+                    throw error
+                }
+
+                const session = data?.session
 
                 if (!session) {
                     setStatus('Redirecting to login...')
                     // Redirect to login, preserving the current URL as the redirect target
                     // The Current URL includes ?jobId=... so it will persist
-                    await supabase.auth.signInWithOAuth({
+                    const { error: signInError } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
                             redirectTo: window.location.href
                         }
                     })
+                    if (signInError) throw signInError
                 } else {
                     setStatus('Authenticated. Redirecting to application form...')
                     const { user } = session
@@ -48,7 +55,7 @@ export default function Apply() {
                 }
             } catch (error) {
                 console.error('Error during application flow:', error)
-                setStatus('An error occurred. Please try again.')
+                setStatus(`Error: ${error.message || JSON.stringify(error)}`)
             }
         }
 
