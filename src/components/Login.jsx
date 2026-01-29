@@ -68,6 +68,7 @@ export default function Login() {
                     <h2>Welcome, {user.user_metadata.full_name}</h2>
                     <p>Email: {user.email}</p>
                     <button onClick={handleUploadCV} className="btn-primary">Upload CV</button>
+                    <button onClick={() => window.location.href = '/profile'} className="btn-secondary" style={{ marginBottom: '0.5rem' }}>Edit Profile</button>
                     <button onClick={handleLogout} className="btn-secondary">Sign Out</button>
                 </div>
             </div>
